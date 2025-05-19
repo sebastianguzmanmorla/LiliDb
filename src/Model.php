@@ -23,6 +23,7 @@ use ReflectionProperty;
 trait Model
 {
     protected static ReflectionClass $ReflectionClass;
+
     protected static ITable $Table;
 
     public function __toString(): string
@@ -75,12 +76,11 @@ trait Model
         static::$Table = $Table;
     }
 
-    public static function New(mixed ...$Properties) : self
+    public static function New(mixed ...$Properties): self
     {
         $Item = new self();
 
-        foreach($Properties as $Name => $Value)
-        {
+        foreach ($Properties as $Name => $Value) {
             $Property = static::$ReflectionClass->getProperty($Name);
 
             $Property->setValue($Item, $Value);

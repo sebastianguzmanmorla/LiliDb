@@ -24,11 +24,13 @@ trait CrossData
         self::$Item1->TestId = 1;
         self::$Item1->TestName = 'Test 1';
         self::$Item1->TestDateTime = DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
+        self::$Item1->State = true;
 
         self::$Item2 = new TestTable();
         self::$Item2->TestId = 2;
         self::$Item2->TestName = 'Test 2';
         self::$Item2->TestDateTime = DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
+        self::$Item2->State = true;
 
         self::$Item3 = new TestTable2();
         self::$Item3->Test2Id = 1;

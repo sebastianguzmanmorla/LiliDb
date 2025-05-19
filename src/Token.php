@@ -8,6 +8,8 @@ enum Token: string
 {
     case Comma = ',';
 
+    case DateTimeNow = 'NOW()';
+
     //Value
     case False = 'FALSE';
     case True = 'TRUE';
