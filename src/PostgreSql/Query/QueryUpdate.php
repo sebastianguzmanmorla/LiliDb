@@ -29,7 +29,7 @@ class QueryUpdate extends AbstractQueryUpdate
 
                 $SetFields[] = $FieldValue;
 
-                $Value = $Field->FieldType->ToSql($FieldValue->Value) ?? $FieldValue->Value;
+                $Value = $Field->Type->ToSql($FieldValue->Value) ?? $FieldValue->Value;
 
                 if ($Value !== null && !($Value instanceof IField) && !($Value instanceof Token)) {
                     $this->Parameters[] = $Value;

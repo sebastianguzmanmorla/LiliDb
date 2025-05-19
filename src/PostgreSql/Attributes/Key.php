@@ -9,13 +9,13 @@ use LiliDb\PostgreSql\Types\Numeric\DbBigSerial;
 class Key extends Field
 {
     public function __construct(
-        ?string $FieldName = null
+        ?string $Name = null
     ) {
         parent::__construct(
-            FieldType: new DbBigSerial(),
-            FieldName: $FieldName,
-            FieldAllowNull: false,
-            FieldPrimaryKey: true
+            Type: new DbBigSerial(),
+            Name: $Name,
+            AllowNull: false,
+            PrimaryKey: true
         );
     }
 }

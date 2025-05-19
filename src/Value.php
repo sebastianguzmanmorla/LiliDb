@@ -105,7 +105,7 @@ class Value
 
     private function GetSqlValue(mixed $Value)
     {
-        $Value = $this->Field?->FieldType->ToSql($Value) ?? $Value;
+        $Value = $this->Field?->Type->ToSql($Value) ?? $Value;
 
         if ($Value instanceof IField) {
             return $Value->FieldReference($this->FullReference);

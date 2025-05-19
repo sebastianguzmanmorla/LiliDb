@@ -46,7 +46,7 @@ class Statement implements IStatement
         }
 
         if ($this->Field !== null) {
-            $Query->Query .= ' RETURNING ' . $Field->FieldName;
+            $Query->Query .= ' RETURNING ' . $Field->Name;
         }
 
         $this->Query = $Query;

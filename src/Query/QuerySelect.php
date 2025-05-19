@@ -126,14 +126,14 @@ abstract class QuerySelect extends Query
             $SelectGroup[$this->Table->ModelName]['Table'] = $this->Table;
 
             foreach ($this->Table->TableFields as $Field) {
-                $SelectGroup[$this->Table->ModelName]['Fields'][$Field->FieldName] = $Field;
+                $SelectGroup[$this->Table->ModelName]['Fields'][$Field->Name] = $Field;
             }
 
             foreach ($this->Join as $Join) {
                 $SelectGroup[$Join->Table->ModelName]['Table'] = $Join->Table;
 
                 foreach ($Join->Table->TableFields as $Field) {
-                    $SelectGroup[$Join->Table->ModelName]['Fields'][$Field->FieldName] = $Field;
+                    $SelectGroup[$Join->Table->ModelName]['Fields'][$Field->Name] = $Field;
                 }
             }
         } else {

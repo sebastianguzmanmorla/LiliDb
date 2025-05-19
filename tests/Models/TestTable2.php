@@ -16,19 +16,19 @@ class TestTable2
 {
     use Model;
 
-    #[MySqlKey(FieldName: 'Id')]
-    #[PostgreSqlKey(FieldName: 'Test2Id')]
+    #[MySqlKey(Name: 'Id')]
+    #[PostgreSqlKey(Name: 'Test2Id')]
     public ?int $Test2Id;
 
-    #[MySqlField(FieldType: new DbInt(11, true), FieldName: 'B')]
-    #[PostgreSqlField(FieldType: new DbInteger(), FieldName: 'TestId')]
+    #[MySqlField(Type: new DbInt(11, true), Name: 'B')]
+    #[PostgreSqlField(Type: new DbInteger(), Name: 'TestId')]
     public ?int $TestId;
 
-    #[MySqlField(FieldType: new DbInt(11, true), FieldName: 'C')]
-    #[PostgreSqlField(FieldType: new DbInteger(), FieldName: 'Test2Number')]
+    #[MySqlField(Type: new DbInt(11, true), Name: 'C')]
+    #[PostgreSqlField(Type: new DbInteger(), Name: 'Test2Number')]
     public ?int $Test2Number;
 
-    #[MySqlField(FieldType: new MySqlBoolean(), FieldName: 'D')]
-    #[PostgreSqlField(FieldType: new PostgreSqlBoolean(), FieldName: 'Test2State')]
+    #[MySqlField(Type: new MySqlBoolean(), Name: 'D')]
+    #[PostgreSqlField(Type: new PostgreSqlBoolean(), Name: 'Test2State')]
     public ?bool $Test2State;
 }

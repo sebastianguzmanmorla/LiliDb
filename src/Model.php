@@ -65,13 +65,13 @@ trait Model
             $Field = $Field[0]->newInstance();
 
             $Field->Table = $Table;
-            $Field->FieldName ??= $FieldReflection->getName();
+            $Field->Name ??= $FieldReflection->getName();
             $Field->FieldReflection = $FieldReflection;
 
             $Table->TableFields[$FieldReflection->getName()] = $Field;
         }
 
-        $Table->TablePrimaryKeys = array_filter(array_map(fn (IField $Field) => $Field->FieldPrimaryKey ? $Field : null, $Table->TableFields));
+        $Table->TablePrimaryKeys = array_filter(array_map(fn (IField $Field) => $Field->PrimaryKey ? $Field : null, $Table->TableFields));
 
         static::$Table = $Table;
     }

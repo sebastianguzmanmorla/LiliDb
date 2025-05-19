@@ -61,7 +61,7 @@ class Table implements ITable
     {
         $Fields = array_map(fn (Field $Field) => $Field->FieldDefinition(), $this->TableFields);
 
-        $PrimaryKeys = array_map(fn (Field $Field) => $Field->FieldName, $this->TablePrimaryKeys);
+        $PrimaryKeys = array_map(fn (Field $Field) => $Field->Name, $this->TablePrimaryKeys);
 
         if (!empty($PrimaryKeys)) {
             $Fields[] = 'PRIMARY KEY (`' . implode('`, `', $PrimaryKeys) . '`)';

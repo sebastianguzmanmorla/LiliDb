@@ -9,14 +9,14 @@ use LiliDb\MySql\Types\Numeric\DbBigInt;
 class Key extends Field
 {
     public function __construct(
-        ?string $FieldName = null
+        ?string $Name = null
     ) {
         parent::__construct(
-            FieldType: new DbBigInt(Unsigned: true),
-            FieldName: $FieldName,
-            FieldAllowNull: false,
-            FieldPrimaryKey: true,
-            FieldAutoIncrement: true
+            Type: new DbBigInt(Unsigned: true),
+            Name: $Name,
+            AllowNull: false,
+            PrimaryKey: true,
+            AutoIncrement: true
         );
     }
 }

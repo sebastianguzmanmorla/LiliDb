@@ -20,27 +20,27 @@ class TestTable
 {
     use Model;
 
-    #[MySqlKey(FieldName: 'Id')]
-    #[PostgreSqlKey(FieldName: 'Id')]
+    #[MySqlKey(Name: 'Id')]
+    #[PostgreSqlKey(Name: 'Id')]
     public ?int $TestId;
 
-    #[MySqlField(FieldType: new MySqlVarchar(50), FieldName: 'Name', FieldDefault: 'Test')]
-    #[PostgreSqlField(FieldType: new PostgreSqlVarchar(50), FieldName: 'TestName', FieldDefault: 'Test')]
+    #[MySqlField(Type: new MySqlVarchar(50), Name: 'Name', Default: 'Test')]
+    #[PostgreSqlField(Type: new PostgreSqlVarchar(50), Name: 'TestName', Default: 'Test')]
     public ?string $TestName;
 
-    #[MySqlField(FieldType: new DbDateTime(), FieldDefault: Token::DateTimeNow)]
-    #[PostgreSqlField(FieldType: new DbTimestamp(), FieldDefault: Token::DateTimeNow)]
+    #[MySqlField(Type: new DbDateTime(), Default: Token::DateTimeNow)]
+    #[PostgreSqlField(Type: new DbTimestamp(), Default: Token::DateTimeNow)]
     public ?DateTime $TestDateTime;
 
     #[MySqlField(
-        FieldName: 'State',
-        FieldType: new MySqlBoolean(),
-        FieldDefault: true,
+        Name: 'State',
+        Type: new MySqlBoolean(),
+        Default: true,
     )]
     #[PostgreSqlField(
-        FieldName: 'State',
-        FieldType: new PostgreBoolean(),
-        FieldDefault: true,
+        Name: 'State',
+        Type: new PostgreBoolean(),
+        Default: true,
     )]
     public ?bool $State;
 }

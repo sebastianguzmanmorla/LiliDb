@@ -11,14 +11,14 @@ class FieldTypeString extends FieldType
         FieldTypeEnum $Type,
         public ?int $Length = null,
     ) {
-        $this->FieldType = $Type;
+        $this->Type = $Type;
     }
 
     public function TypeDefinition(): string
     {
         $Length = $this->Length !== null ? "({$this->Length})" : '';
 
-        return $this->FieldType->value . $Length;
+        return $this->Type->value . $Length;
     }
 
     public function FromSql(mixed $Value): mixed

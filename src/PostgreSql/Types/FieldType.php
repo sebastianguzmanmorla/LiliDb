@@ -4,7 +4,7 @@ namespace LiliDb\PostgreSql\Types;
 
 abstract class FieldType
 {
-    public FieldTypeEnum $FieldType;
+    public FieldTypeEnum $Type;
 
     abstract public function TypeDefinition(): string;
 

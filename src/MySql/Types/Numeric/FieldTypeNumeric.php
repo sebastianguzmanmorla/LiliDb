@@ -14,7 +14,7 @@ abstract class FieldTypeNumeric extends FieldType
         public bool $Unsigned = false,
         public bool $Zerofill = false
     ) {
-        $this->FieldType = $Type;
+        $this->Type = $Type;
     }
 
     public function TypeDefinition(): string
@@ -24,7 +24,7 @@ abstract class FieldTypeNumeric extends FieldType
         $Unsigned = $this->Unsigned ? ' UNSIGNED' : '';
         $Zerofill = $this->Zerofill ? ' ZEROFILL' : '';
 
-        return $this->FieldType->value . $Length . $Unsigned . $Zerofill;
+        return $this->Type->value . $Length . $Unsigned . $Zerofill;
     }
 
     public function FromSql(mixed $Value): mixed

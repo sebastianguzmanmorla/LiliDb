@@ -26,7 +26,7 @@ class QueryInsert extends AbstractQueryInsert
             }
         }
 
-        $this->Query .= implode(', ', array_map(fn (IField $Field) => '"' . $Field->FieldName . '"', $QueryFields));
+        $this->Query .= implode(', ', array_map(fn (IField $Field) => '"' . $Field->Name . '"', $QueryFields));
 
         $Values = [];
 
@@ -45,7 +45,7 @@ class QueryInsert extends AbstractQueryInsert
 
                     $Values[$ItemIndex][$FieldIndex] = $FieldValue;
 
-                    $Value = $Field->FieldType->ToSql($FieldValue->Value) ?? $FieldValue->Value;
+                    $Value = $Field->Type->ToSql($FieldValue->Value) ?? $FieldValue->Value;
 
                     if ($Value !== null && !($Value instanceof IField) && !($Value instanceof Token)) {
                         $this->Parameters[] = $Value;
@@ -61,14 +61,14 @@ class QueryInsert extends AbstractQueryInsert
         $this->Query .= ') VALUES (' . $Values . ')';
 
         if (!empty($this->OnDuplicateKeyUpdate)) {
-            $PrimaryKeys = array_map(fn (IField $Field) => '"' . $Field->FieldName . '"', $this->Table->TablePrimaryKeys);
+            $PrimaryKeys = array_map(fn (IField $Field) => '"' . $Field->Name . '"', $this->Table->TablePrimaryKeys);
 
             $this->Query .= ' ON CONFLICT (' . implode(', ', $PrimaryKeys) . ') DO UPDATE SET ';
 
             $Update = [];
 
             foreach ($this->OnDuplicateKeyUpdate as $Field) {
-                $Update[] = '"' . $Field->FieldName . '" = EXCLUDED."' . $Field->FieldName . '"';
+                $Update[] = '"' . $Field->Name . '" = EXCLUDED."' . $Field->Name . '"';
             }
 
             $this->Query .= implode(', ', $Update);
@@ -81,7 +81,7 @@ class QueryInsert extends AbstractQueryInsert
     {
         $Result = parent::Execute();
 
-        $PrimaryKeys = array_map(fn (IField $Field) => $Field->FieldName, $this->Table->TablePrimaryKeys);
+        $PrimaryKeys = array_map(fn (IField $Field) => $Field->Name, $this->Table->TablePrimaryKeys);
 
         if (!empty($PrimaryKeys)) {
             $PrimaryKey = current($PrimaryKeys);

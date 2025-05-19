@@ -17,22 +17,22 @@ class Field implements IField
     public ReflectionProperty $FieldReflection;
 
     public function __construct(
-        public FieldType $FieldType,
-        public ?string $FieldName = null,
-        public bool $FieldAllowNull = false,
-        public bool $FieldPrimaryKey = false,
-        public bool $FieldAutoIncrement = false,
-        public mixed $FieldDefault = null,
+        public FieldType $Type,
+        public ?string $Name = null,
+        public bool $AllowNull = false,
+        public bool $PrimaryKey = false,
+        public bool $AutoIncrement = false,
+        public mixed $Default = null,
     ) {
     }
 
     public function FieldDefinition(): string
     {
-        $AllowNull = $this->FieldAllowNull ? ' NULL' : ' NOT NULL';
-        $AutoIncrement = $this->FieldAutoIncrement ? ' AUTO_INCREMENT' : '';
+        $AllowNull = $this->AllowNull ? ' NULL' : ' NOT NULL';
+        $AutoIncrement = $this->AutoIncrement ? ' AUTO_INCREMENT' : '';
 
-        if ($this->FieldDefault !== null) {
-            $Value = $this->FieldDefault instanceof Token ? $this->FieldDefault : $this->FieldType->ToSql($this->FieldDefault);
+        if ($this->Default !== null) {
+            $Value = $this->Default instanceof Token ? $this->Default : $this->Type->ToSql($this->Default);
 
             if ($Value instanceof Token) {
                 $Default = " DEFAULT {$Value->value}";
@@ -45,19 +45,19 @@ class Field implements IField
             $Default = '';
         }
 
-        return "`{$this->FieldName}` {$this->FieldType->TypeDefinition()}{$AllowNull}{$AutoIncrement}{$Default}";
+        return "`{$this->Name}` {$this->Type->TypeDefinition()}{$AllowNull}{$AutoIncrement}{$Default}";
     }
 
     public function FieldReference(bool $FullReference): string
     {
         $TableName = $FullReference ? "`{$this->Table->TableName}`." : '';
 
-        return "{$TableName}`{$this->FieldName}`";
+        return "{$TableName}`{$this->Name}`";
     }
 
     public function FieldSetValue(object $Class, mixed $Value): void
     {
-        $Value = $this->FieldType->FromSql($Value);
+        $Value = $this->Type->FromSql($Value);
 
         $this->FieldReflection->setValue($Class, $Value);
     }
