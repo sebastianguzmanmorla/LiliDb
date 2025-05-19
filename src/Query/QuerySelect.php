@@ -86,6 +86,24 @@ abstract class QuerySelect extends Query
         return $this;
     }
 
+    public function Delete(): QueryDelete
+    {
+        $Query = $this->Table->Delete();
+
+        $Query->Where = $this->Where;
+
+        return $Query;
+    }
+
+    public function Update(object $Value): QueryUpdate
+    {
+        $Query = $this->Table->Update($Value);
+
+        $Query->Where = $this->Where;
+
+        return $Query;
+    }
+
     public function Any(): bool
     {
         $Query = new static(Table: $this->Table);
