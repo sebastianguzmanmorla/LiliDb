@@ -19,7 +19,7 @@ class QueryInsert extends AbstractQueryInsert
         $QueryFields = [];
 
         foreach ($this->Items as $Item) {
-            foreach ($this->Table->TableFields as $FieldIndex => $Field) {
+            foreach ($this->Table->Fields as $FieldIndex => $Field) {
                 if ($Field->FieldReflection->isInitialized($Item)) {
                     $QueryFields[$FieldIndex] = $Field;
                 }
@@ -61,7 +61,7 @@ class QueryInsert extends AbstractQueryInsert
         $this->Query .= ') VALUES (' . $Values . ')';
 
         if (!empty($this->OnDuplicateKeyUpdate)) {
-            $PrimaryKeys = array_map(fn (IField $Field) => '"' . $Field->Name . '"', $this->Table->TablePrimaryKeys);
+            $PrimaryKeys = array_map(fn (IField $Field) => '"' . $Field->Name . '"', $this->Table->PrimaryKeys);
 
             $this->Query .= ' ON CONFLICT (' . implode(', ', $PrimaryKeys) . ') DO UPDATE SET ';
 
@@ -81,7 +81,7 @@ class QueryInsert extends AbstractQueryInsert
     {
         $Result = parent::Execute();
 
-        $PrimaryKeys = array_map(fn (IField $Field) => $Field->Name, $this->Table->TablePrimaryKeys);
+        $PrimaryKeys = array_map(fn (IField $Field) => $Field->Name, $this->Table->PrimaryKeys);
 
         if (!empty($PrimaryKeys)) {
             $PrimaryKey = current($PrimaryKeys);

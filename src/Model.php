@@ -68,10 +68,10 @@ trait Model
             $Field->Name ??= $FieldReflection->getName();
             $Field->FieldReflection = $FieldReflection;
 
-            $Table->TableFields[$FieldReflection->getName()] = $Field;
+            $Table->Fields[$FieldReflection->getName()] = $Field;
         }
 
-        $Table->TablePrimaryKeys = array_filter(array_map(fn (IField $Field) => $Field->PrimaryKey ? $Field : null, $Table->TableFields));
+        $Table->PrimaryKeys = array_filter(array_map(fn (IField $Field) => $Field->PrimaryKey ? $Field : null, $Table->Fields));
 
         static::$Table = $Table;
     }

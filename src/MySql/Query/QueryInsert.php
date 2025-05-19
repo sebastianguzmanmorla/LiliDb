@@ -18,7 +18,7 @@ class QueryInsert extends AbstractQueryInsert
         $QueryFields = [];
 
         foreach ($this->Items as $Item) {
-            foreach ($this->Table->TableFields as $FieldIndex => $Field) {
+            foreach ($this->Table->Fields as $FieldIndex => $Field) {
                 if ($Field->FieldReflection->isInitialized($Item)) {
                     $QueryFields[$FieldIndex] = $Field;
                 }

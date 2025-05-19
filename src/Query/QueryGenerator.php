@@ -321,7 +321,7 @@ trait QueryGenerator
                     $Tokens->next();
                     yield $Instance->Field($Token()->text);
                 } else {
-                    foreach ($Instance->TableFields as $Field) {
+                    foreach ($Instance->Fields as $Field) {
                         yield $Field;
                     }
                 }

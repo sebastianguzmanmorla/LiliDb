@@ -50,7 +50,7 @@ class Field implements IField
 
     public function FieldReference(bool $FullReference): string
     {
-        $TableName = $FullReference ? "`{$this->Table->TableName}`." : '';
+        $TableName = $FullReference ? "`{$this->Table->Name}`." : '';
 
         return "{$TableName}`{$this->Name}`";
     }

@@ -125,14 +125,14 @@ abstract class QuerySelect extends Query
         if ($Associative) {
             $SelectGroup[$this->Table->ModelName]['Table'] = $this->Table;
 
-            foreach ($this->Table->TableFields as $Field) {
+            foreach ($this->Table->Fields as $Field) {
                 $SelectGroup[$this->Table->ModelName]['Fields'][$Field->Name] = $Field;
             }
 
             foreach ($this->Join as $Join) {
                 $SelectGroup[$Join->Table->ModelName]['Table'] = $Join->Table;
 
-                foreach ($Join->Table->TableFields as $Field) {
+                foreach ($Join->Table->Fields as $Field) {
                     $SelectGroup[$Join->Table->ModelName]['Fields'][$Field->Name] = $Field;
                 }
             }
@@ -164,7 +164,7 @@ abstract class QuerySelect extends Query
                     foreach ($SelectGroup as $TableName => $TableArray) {
                         if ($TableName == '') {
                         } else {
-                            $Class = $TableArray['Table']->TableReflection->newInstance();
+                            $Class = $TableArray['Table']->Reflection->newInstance();
 
                             foreach ($TableArray['Fields'] as $Index => $Field) {
                                 $Field->FieldSetValue($Class, $Row[$Index]);
@@ -188,7 +188,7 @@ abstract class QuerySelect extends Query
                                 $ResultRow->__set($Field, $Value);
                             }
                         } else {
-                            $Class = $TableArray['Table']->TableReflection->newInstance();
+                            $Class = $TableArray['Table']->Reflection->newInstance();
 
                             foreach ($TableArray['Fields'] as $Index => $Field) {
                                 $Value = $Row[$Index] ?? null;

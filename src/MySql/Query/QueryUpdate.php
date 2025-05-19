@@ -17,7 +17,7 @@ class QueryUpdate extends AbstractQueryUpdate
 
         $SetFields = [];
 
-        foreach ($this->Table->TableFields as $Field) {
+        foreach ($this->Table->Fields as $Field) {
             if ($Field->FieldReflection->isInitialized($this->Value)) {
                 $FieldValue = new Value(
                     Field: $Field,

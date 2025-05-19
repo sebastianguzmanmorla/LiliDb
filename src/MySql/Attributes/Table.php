@@ -22,20 +22,20 @@ class Table implements ITable
 {
     public Database $Database;
 
-    public ReflectionClass $TableReflection;
+    public ReflectionClass $Reflection;
 
     public string $ModelName;
 
-    public array $TableFields = [];
+    public array $Fields = [];
 
-    public array $TablePrimaryKeys = [];
+    public array $PrimaryKeys = [];
 
     public function __construct(
         public string $Model,
-        public ?string $TableName = null
+        public ?string $Name = null
     ) {
-        $this->TableReflection = new ReflectionClass($Model);
-        $this->ModelName = $this->TableReflection->getShortName();
+        $this->Reflection = new ReflectionClass($Model);
+        $this->ModelName = $this->Reflection->getShortName();
     }
 
     public function __toString(): string
@@ -45,8 +45,8 @@ class Table implements ITable
 
     public function &Field(string $Name): Field
     {
-        if (isset($this->TableFields[$Name])) {
-            return $this->TableFields[$Name];
+        if (isset($this->Fields[$Name])) {
+            return $this->Fields[$Name];
         }
 
         throw new Exception("Field with name '{$Name}' doesn't exist");
@@ -54,14 +54,14 @@ class Table implements ITable
 
     public function TableReference(): string
     {
-        return "`{$this->TableName}`";
+        return "`{$this->Name}`";
     }
 
     public function CreateTable($IfNotExists = true): Query
     {
-        $Fields = array_map(fn (Field $Field) => $Field->FieldDefinition(), $this->TableFields);
+        $Fields = array_map(fn (Field $Field) => $Field->FieldDefinition(), $this->Fields);
 
-        $PrimaryKeys = array_map(fn (Field $Field) => $Field->Name, $this->TablePrimaryKeys);
+        $PrimaryKeys = array_map(fn (Field $Field) => $Field->Name, $this->PrimaryKeys);
 
         if (!empty($PrimaryKeys)) {
             $Fields[] = 'PRIMARY KEY (`' . implode('`, `', $PrimaryKeys) . '`)';
