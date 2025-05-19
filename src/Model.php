@@ -22,15 +22,14 @@ use ReflectionProperty;
 
 trait Model
 {
+    protected static ReflectionClass $ReflectionClass;
     protected static ITable $Table;
 
     public function __toString(): string
     {
         $Json = [];
 
-        $ReflectionClass = new ReflectionClass(static::class);
-
-        foreach ($ReflectionClass->getProperties(ReflectionProperty::IS_PUBLIC) as $FieldReflection) {
+        foreach (static::$ReflectionClass->getProperties(ReflectionProperty::IS_PUBLIC) as $FieldReflection) {
             if ($FieldReflection->isInitialized($this)) {
                 $Value = $FieldReflection->getValue($this);
 
@@ -47,7 +46,7 @@ trait Model
 
     public static function Initialize(ITable &$Table): void
     {
-        $ReflectionClass = new ReflectionClass(static::class);
+        static::$ReflectionClass = new ReflectionClass(static::class);
 
         $FieldClass = match ($Table::class) {
             MySqlTable::class => MySqlField::class,
@@ -55,7 +54,7 @@ trait Model
             default => throw new Exception($Table::class . ' not implemented')
         };
 
-        foreach ($ReflectionClass->getProperties(ReflectionProperty::IS_PUBLIC) as $FieldReflection) {
+        foreach (static::$ReflectionClass->getProperties(ReflectionProperty::IS_PUBLIC) as $FieldReflection) {
             $Field = $FieldReflection->getAttributes($FieldClass, ReflectionAttribute::IS_INSTANCEOF);
 
             if (!isset($Field[0])) {
@@ -74,6 +73,20 @@ trait Model
         $Table->TablePrimaryKeys = array_filter(array_map(fn (IField $Field) => $Field->FieldPrimaryKey ? $Field : null, $Table->TableFields));
 
         static::$Table = $Table;
+    }
+
+    public static function New(mixed ...$Properties) : self
+    {
+        $Item = new self();
+
+        foreach($Properties as $Name => $Value)
+        {
+            $Property = static::$ReflectionClass->getProperty($Name);
+
+            $Property->setValue($Item, $Value);
+        }
+
+        return $Item;
     }
 
     public static function &Field(string $Name): IField
