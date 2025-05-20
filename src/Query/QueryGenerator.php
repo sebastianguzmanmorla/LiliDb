@@ -411,7 +411,9 @@ trait QueryGenerator
             if (is_array($Value->Value)) {
                 $Value->Value = $Value->Value[$Key] ?? null;
             } else {
-                $Value->Value = $Value->Value->{$Key} ?? null;
+                $ValueReflection = new ReflectionClass($Value->Value);
+                $ValueProperty = $ValueReflection->getProperty($Key);
+                $Value->Value = $ValueProperty->getValue($Value->Value) ?? null;
             }
 
             $Value->Expression .= $Tokens[$UnsetIndex]->text;
