@@ -61,7 +61,7 @@ trait QueryGenerator
 
             $Value = null;
 
-            if (in_array($Token->text, ['$_SESSION', '$_GET', '$_POST', '$_COOKIE', '$_SERVER', '$_ENV'])) {
+            if (in_array($Token->text, ['$_SESSION', '$_GET', '$_POST', '$_COOKIE', '$_SERVER', '$_ENV', '$this'])) {
                 $Value = new Value(
                     Variable: $Token->text,
                     Expression: '',
@@ -72,6 +72,7 @@ trait QueryGenerator
                         '$_COOKIE' => $_COOKIE,
                         '$_SERVER' => $_SERVER,
                         '$_ENV' => $_ENV,
+                        '$this' => $Reflection->getClosureThis(),
                         default => null
                     }
                 );
@@ -177,7 +178,7 @@ trait QueryGenerator
 
                         $Value = null;
 
-                        if (in_array($TempToken->text, ['$_SESSION', '$_GET', '$_POST', '$_COOKIE', '$_SERVER', '$_ENV'])) {
+                        if (in_array($TempToken->text, ['$_SESSION', '$_GET', '$_POST', '$_COOKIE', '$_SERVER', '$_ENV', '$this'])) {
                             $Value = new Value(
                                 Variable: $TempToken->text,
                                 Expression: '',
@@ -188,6 +189,7 @@ trait QueryGenerator
                                     '$_COOKIE' => $_COOKIE,
                                     '$_SERVER' => $_SERVER,
                                     '$_ENV' => $_ENV,
+                                    '$this' => $Reflection->getClosureThis(),
                                     default => null
                                 }
                             );
