@@ -49,9 +49,9 @@ class Database
 
             $Table->Database = $this;
 
-            $Table->TableName ??= $DatabaseProperty->getName();
+            $Table->Name ??= $DatabaseProperty->getName();
 
-            $Table->TableReflection->newInstanceWithoutConstructor()::Initialize($Table);
+            $Table->Reflection->newInstanceWithoutConstructor()::Initialize($Table);
 
             $DatabaseProperty->setValue($this, $Table);
 

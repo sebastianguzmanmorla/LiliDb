@@ -8,12 +8,12 @@ class DbBoolean extends FieldType
 {
     public function __construct()
     {
-        $this->FieldType = FieldTypeEnum::Boolean;
+        $this->Type = FieldTypeEnum::Boolean;
     }
 
     public function TypeDefinition(): string
     {
-        return $this->FieldType->value;
+        return $this->Type->value;
     }
 
     public function FromSql(mixed $Value): mixed

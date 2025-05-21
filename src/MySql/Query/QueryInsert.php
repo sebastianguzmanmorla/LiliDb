@@ -18,7 +18,7 @@ class QueryInsert extends AbstractQueryInsert
         $QueryFields = [];
 
         foreach ($this->Items as $Item) {
-            foreach ($this->Table->TableFields as $FieldIndex => $Field) {
+            foreach ($this->Table->Fields as $FieldIndex => $Field) {
                 if ($Field->FieldReflection->isInitialized($Item)) {
                     $QueryFields[$FieldIndex] = $Field;
                 }
@@ -44,7 +44,7 @@ class QueryInsert extends AbstractQueryInsert
 
                     $Values[$ItemIndex][$FieldIndex] = $FieldValue;
 
-                    $Value = $Field->FieldType->ToSql($FieldValue->Value) ?? $FieldValue->Value;
+                    $Value = $Field->Type->ToSql($FieldValue->Value) ?? $FieldValue->Value;
 
                     if ($Value !== null && !($Value instanceof IField) && !($Value instanceof Token)) {
                         $this->Parameters[] = $Value;

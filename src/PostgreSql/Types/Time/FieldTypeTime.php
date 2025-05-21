@@ -12,7 +12,7 @@ abstract class FieldTypeTime extends FieldType
         public ?int $Precision = null,
         public bool $WithTimeZone = false,
     ) {
-        $this->FieldType = $Type;
+        $this->Type = $Type;
     }
 
     public function TypeDefinition(): string
@@ -20,6 +20,6 @@ abstract class FieldTypeTime extends FieldType
         $Precision = $this->Precision !== null ? "({$this->Precision})" : '';
         $WithTimeZone = $this->WithTimeZone ? ' with time zone' : '';
 
-        return $this->FieldType->value . $Precision . $WithTimeZone;
+        return $this->Type->value . $Precision . $WithTimeZone;
     }
 }

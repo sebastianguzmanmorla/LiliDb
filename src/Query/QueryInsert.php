@@ -49,7 +49,7 @@ abstract class QueryInsert extends Query
         try {
             $this->Database->Query = $this;
 
-            $PrimaryKey = count($this->Table->TablePrimaryKeys) == 1 && !empty($this->Query->OnDuplicateKeyUpdate) ? current($this->Table->TablePrimaryKeys) : null;
+            $PrimaryKey = count($this->Table->PrimaryKeys) == 1 && !empty($this->Query->OnDuplicateKeyUpdate) ? current($this->Table->PrimaryKeys) : null;
 
             if ($Statement = $this->Table->Database->Connection->Prepare($this, $PrimaryKey)) {
                 if ($Statement->Execute()) {

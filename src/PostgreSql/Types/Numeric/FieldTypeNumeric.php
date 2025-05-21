@@ -12,7 +12,7 @@ abstract class FieldTypeNumeric extends FieldType
         public ?int $Precision = null,
         public ?int $Scale = null
     ) {
-        $this->FieldType = $Type;
+        $this->Type = $Type;
     }
 
     public function TypeDefinition(): string
@@ -20,7 +20,7 @@ abstract class FieldTypeNumeric extends FieldType
         $Scale = $this->Scale !== null ? ",{$this->Scale}" : '';
         $Precision = $this->Precision !== null ? "({$this->Precision}{$Scale})" : '';
 
-        return $this->FieldType->value . $Precision;
+        return $this->Type->value . $Precision;
     }
 
     public function FromSql(mixed $Value): mixed

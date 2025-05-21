@@ -86,6 +86,24 @@ abstract class QuerySelect extends Query
         return $this;
     }
 
+    public function Delete(): QueryDelete
+    {
+        $Query = $this->Table->Delete();
+
+        $Query->Where = $this->Where;
+
+        return $Query;
+    }
+
+    public function Update(object $Value): QueryUpdate
+    {
+        $Query = $this->Table->Update($Value);
+
+        $Query->Where = $this->Where;
+
+        return $Query;
+    }
+
     public function Any(): bool
     {
         $Query = new static(Table: $this->Table);
@@ -125,15 +143,15 @@ abstract class QuerySelect extends Query
         if ($Associative) {
             $SelectGroup[$this->Table->ModelName]['Table'] = $this->Table;
 
-            foreach ($this->Table->TableFields as $Field) {
-                $SelectGroup[$this->Table->ModelName]['Fields'][$Field->FieldName] = $Field;
+            foreach ($this->Table->Fields as $Field) {
+                $SelectGroup[$this->Table->ModelName]['Fields'][$Field->Name] = $Field;
             }
 
             foreach ($this->Join as $Join) {
                 $SelectGroup[$Join->Table->ModelName]['Table'] = $Join->Table;
 
-                foreach ($Join->Table->TableFields as $Field) {
-                    $SelectGroup[$Join->Table->ModelName]['Fields'][$Field->FieldName] = $Field;
+                foreach ($Join->Table->Fields as $Field) {
+                    $SelectGroup[$Join->Table->ModelName]['Fields'][$Field->Name] = $Field;
                 }
             }
         } else {
@@ -164,7 +182,7 @@ abstract class QuerySelect extends Query
                     foreach ($SelectGroup as $TableName => $TableArray) {
                         if ($TableName == '') {
                         } else {
-                            $Class = $TableArray['Table']->TableReflection->newInstance();
+                            $Class = $TableArray['Table']->Reflection->newInstance();
 
                             foreach ($TableArray['Fields'] as $Index => $Field) {
                                 $Field->FieldSetValue($Class, $Row[$Index]);
@@ -188,7 +206,7 @@ abstract class QuerySelect extends Query
                                 $ResultRow->__set($Field, $Value);
                             }
                         } else {
-                            $Class = $TableArray['Table']->TableReflection->newInstance();
+                            $Class = $TableArray['Table']->Reflection->newInstance();
 
                             foreach ($TableArray['Fields'] as $Index => $Field) {
                                 $Value = $Row[$Index] ?? null;

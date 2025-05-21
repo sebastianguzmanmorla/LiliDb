@@ -93,14 +93,14 @@ trait Where
 
                             if (is_array($Item->Value)) {
                                 foreach ($Item->Value as $Value) {
-                                    $Value = $Item->Field?->FieldType->ToSql($Value) ?? $Value;
+                                    $Value = $Item->Field?->Type->ToSql($Value) ?? $Value;
 
                                     if ($Value !== null && !($Value instanceof IField) && !($Value instanceof Token)) {
                                         $Parameters[] = $Value;
                                     }
                                 }
                             } else {
-                                $Value = $Item->Field?->FieldType->ToSql($Item->Value) ?? $Item->Value;
+                                $Value = $Item->Field?->Type->ToSql($Item->Value) ?? $Item->Value;
 
                                 if ($Value !== null && !($Value instanceof IField) && !($Value instanceof Token)) {
                                     $Parameters[] = $Value;

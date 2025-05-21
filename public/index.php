@@ -44,10 +44,11 @@ foreach ($Connections as $Connection) {
         echo '<hr>';
     }
 
-    $Insert1 = new TestTable();
-    $Insert1->TestId = 1;
-    $Insert1->TestName = 'a ' . date('Y-m-d H:i:s');
-    $Insert1->TestDateTime = new DateTime();
+    $Insert1 = TestTable::New(
+        TestId: 1,
+        TestName: 'a ' . date('Y-m-d H:i:s'),
+        TestDateTime: new DateTime(),
+    );
 
     var_dump($Insert1);
 

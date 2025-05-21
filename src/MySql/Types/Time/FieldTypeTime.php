@@ -11,13 +11,13 @@ abstract class FieldTypeTime extends FieldType
         FieldTypeEnum $Type,
         public ?int $Fraction = null,
     ) {
-        $this->FieldType = $Type;
+        $this->Type = $Type;
     }
 
     public function TypeDefinition(): string
     {
         $Fraction = $this->Fraction !== null ? "({$this->Fraction})" : '';
 
-        return $this->FieldType->value . $Fraction;
+        return $this->Type->value . $Fraction;
     }
 }

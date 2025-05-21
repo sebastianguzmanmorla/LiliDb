@@ -17,7 +17,7 @@ class QueryUpdate extends AbstractQueryUpdate
 
         $SetFields = [];
 
-        foreach ($this->Table->TableFields as $Field) {
+        foreach ($this->Table->Fields as $Field) {
             if ($Field->FieldReflection->isInitialized($this->Value)) {
                 $FieldValue = new Value(
                     Field: $Field,
@@ -29,7 +29,7 @@ class QueryUpdate extends AbstractQueryUpdate
 
                 $SetFields[] = $FieldValue;
 
-                $Value = $Field->FieldType->ToSql($FieldValue->Value) ?? $FieldValue->Value;
+                $Value = $Field->Type->ToSql($FieldValue->Value) ?? $FieldValue->Value;
 
                 if ($Value !== null && !($Value instanceof IField) && !($Value instanceof Token)) {
                     $this->Parameters[] = $Value;

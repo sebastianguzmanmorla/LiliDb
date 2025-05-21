@@ -9,11 +9,11 @@ use LiliDb\PostgreSql\Attributes\Table as PostgreSqlTable;
 
 class TestDatabase extends Database
 {
-    #[MySqlTable(Model: TestTable::class, TableName: 'A')]
-    #[PostgreSqlTable(Model: TestTable::class, Schema: 'public', TableName: 'TestTable')]
+    #[MySqlTable(Model: TestTable::class, Name: 'A')]
+    #[PostgreSqlTable(Model: TestTable::class, Schema: 'public', Name: 'TestTable')]
     public ITable $TestTable;
 
-    #[MySqlTable(Model: TestTable2::class, TableName: 'B')]
-    #[PostgreSqlTable(Model: TestTable2::class, Schema: 'public', TableName: 'TestTable2')]
+    #[MySqlTable(Model: TestTable2::class, Name: 'B')]
+    #[PostgreSqlTable(Model: TestTable2::class, Schema: 'public', Name: 'TestTable2')]
     public ITable $TestTable2;
 }
