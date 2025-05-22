@@ -251,13 +251,13 @@ echo $Insert->Query;
 
 MySql query execution:
 ```sql
-INSERT INTO `A` (`Id`, `Name`, `TestDateTime`) 
-VALUES 
-  (1, 'a', '2025-05-22 03:18:51'), 
-  (2, 'b', '2025-05-22 03:18:51')
-ON DUPLICATE KEY UPDATE 
-  `Name` = VALUES(`Name`), 
-  `TestDateTime` = VALUES (`TestDateTime`)
+INSERT INTO `A` (`Id`, `Name`, `TestDateTime`)
+VALUES
+  (1, 'a', '2025-05-22 03:18:51'),
+  (2, 'b', '2025-05-22 03:18:51') as new
+ON DUPLICATE KEY UPDATE
+  `Name` = new.`Name`,
+  `TestDateTime` = new.`TestDateTime`
 ```
 
 PostgreSql query execution:
