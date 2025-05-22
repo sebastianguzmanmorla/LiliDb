@@ -2,14 +2,18 @@
 
 namespace LiliDb\Query;
 
+use Closure;
 use Exception;
 use LiliDb\Exceptions\QueryException;
 use LiliDb\Interfaces\IField;
 use LiliDb\Interfaces\ITable;
 use LiliDb\Result;
+use ReflectionFunction;
 
 abstract class QueryInsert extends Query
 {
+    use QueryGenerator;
+
     protected array $Items = [];
 
     protected array $OnDuplicateKeyUpdate = [];
@@ -32,7 +36,7 @@ abstract class QueryInsert extends Query
         $this->Items = $Items;
     }
 
-    public function OnDuplicateKeyUpdate(IField ...$OnDuplicateKeyUpdate): self
+    public function OnDuplicateKeyUpdateField(IField ...$OnDuplicateKeyUpdate): self
     {
         foreach ($OnDuplicateKeyUpdate as $Field) {
             if ($Field->Table->Model != $this->Table->Model) {
@@ -41,6 +45,29 @@ abstract class QueryInsert extends Query
         }
 
         $this->OnDuplicateKeyUpdate = $OnDuplicateKeyUpdate;
+
+        return $this;
+    }
+
+    public function OnDuplicateKeyUpdate(Closure $Fields): self
+    {
+        $this->OnDuplicateKeyUpdate = [];
+
+        $Reflection = new ReflectionFunction($Fields);
+
+        foreach ($Reflection->getParameters() as $Parameter) {
+            $ParameterType = $Parameter->getType();
+
+            if ($ParameterType !== null) {
+                if ($ParameterType->getName() != $this->Table->Model) {
+                    throw new QueryException($ParameterType->getName() . " isn't class " . $this->Table->Model);
+                }
+            }
+        }
+
+        foreach (self::SelectGenerator($Fields) as $Field) {
+            $this->OnDuplicateKeyUpdate[] = $Field;
+        }
 
         return $this;
     }

@@ -1,5 +1,5 @@
 <p align="center">
-  <img title="Lilith" src="https://github.com/sebastianguzmanmorla/LiliDb/blob/main/lili.svg?raw=true" />
+  <img alt="Lilith" title="Lilith" src="https://github.com/sebastianguzmanmorla/LiliDb/blob/main/lili.svg?raw=true" />
 </p>
 
 # LiliDb
@@ -93,6 +93,7 @@ class TestDatabase extends Database
 To define a connection is necessary to instance a **LiliDb\\*\\Connection** class
 
 MySql connection:
+
 ```php
 <?php
 
@@ -111,6 +112,7 @@ $Database = new TestDatabase($Connection, getenv('MYSQL_DATABASE'));
 ```
 
 PostgreSql connection:
+
 ```php
 <?php
 
@@ -138,7 +140,9 @@ foreach ($Database->DatabaseTables as $Table) {
   echo $CreateTable->Query;
 }
 ```
+
 Or
+
 ```php
 $CreateTable = TestTable::CreateTable()
   ->ExecuteQuery();
@@ -159,6 +163,7 @@ CREATE TABLE IF NOT EXISTS `A` (
 ```
 
 PostgreSql query execution:
+
 ```sql
 CREATE TABLE IF NOT EXISTS "public"."TestTable" (
   "Id" bigserial NOT NULL,
@@ -179,7 +184,9 @@ foreach ($Database->DatabaseTables as $Table) {
   echo $TruncateTable->Query;
 }
 ```
+
 Or
+
 ```php
 $TruncateTable = TestTable::TruncateTable()
   ->ExecuteQuery();
@@ -188,11 +195,13 @@ echo $TruncateTable->Query;
 ```
 
 MySql query execution:
+
 ```sql
 TRUNCATE TABLE `A`
 ```
 
 PostgreSql query execution:
+
 ```sql
 TRUNCATE TABLE "public"."TestTable"
 ```
@@ -207,7 +216,9 @@ foreach ($Database->DatabaseTables as $Table) {
   echo $DropTable->Query;
 }
 ```
+
 Or
+
 ```php
 $DropTable = TestTable::DropTable()
   ->ExecuteQuery();
@@ -216,11 +227,13 @@ echo $DropTable->Query;
 ```
 
 MySql query execution:
+
 ```sql
 DROP TABLE `A`
 ```
 
 PostgreSql query execution:
+
 ```sql
 DROP TABLE "public"."TestTable"
 ```
@@ -240,9 +253,9 @@ $Insert2->TestName = 'b';
 $Insert2->TestDateTime = new DateTime();
 
 $Insert = TestTable::Insert($Insert1, $Insert2)
-    ->OnDuplicateKeyUpdate(
-        TestTable::Field('TestName'),
-        TestTable::Field('TestDateTime')
+    ->OnDuplicateKeyUpdate(fn(TestTable $x) =>
+        $x->TestName &&
+        $x->TestDateTime
     )
     ->Execute();
 
@@ -250,6 +263,7 @@ echo $Insert->Query;
 ```
 
 MySql query execution:
+
 ```sql
 INSERT INTO `A` (`Id`, `Name`, `TestDateTime`)
 VALUES
@@ -261,6 +275,7 @@ ON DUPLICATE KEY UPDATE
 ```
 
 PostgreSql query execution:
+
 ```sql
 INSERT INTO "public"."TestTable" ("Id", "TestName", "TestDateTime")
 VALUES
@@ -286,6 +301,7 @@ echo $Update->Query;
 ```
 
 MySql query execution:
+
 ```sql
 UPDATE
   `A`
@@ -297,6 +313,7 @@ WHERE
 ```
 
 PostgreSql query execution:
+
 ```sql
 UPDATE
   "public"."TestTable"
@@ -318,6 +335,7 @@ echo $Delete->Query;
 ```
 
 MySql query execution:
+
 ```sql
 DELETE FROM `A`
 WHERE
@@ -325,6 +343,7 @@ WHERE
 ```
 
 PostgreSql query execution:
+
 ```sql
 DELETE FROM "public"."TestTable"
 WHERE
@@ -346,7 +365,9 @@ foreach ($Select as $Item) {
   var_dump($Item);
 }
 ```
+
 Output:
+
 ```
 object(LiliDb\ResultRow)[267]
   public 'TestTable' =>
@@ -365,6 +386,7 @@ object(LiliDb\ResultRow)[267]
 ```
 
 MySql query execution:
+
 ```sql
 SELECT
   `A`.`Id`,
@@ -377,6 +399,7 @@ ORDER BY
 ```
 
 PostgreSql query execution:
+
 ```sql
 SELECT
   "TestTable"."Id",
@@ -400,7 +423,9 @@ foreach ($Select as $Item) {
     var_dump($Item);
 }
 ```
+
 Output:
+
 ```
 object(LiliDb\Tests\Models\TestTable2)[317]
   public ?int 'Test2Id' => int 1
@@ -416,6 +441,7 @@ object(LiliDb\Tests\Models\TestTable2)[236]
 ```
 
 MySql query execution:
+
 ```sql
 SELECT
   `B`.`Id`,
@@ -429,6 +455,7 @@ WHERE
 ```
 
 PostgreSql query execution:
+
 ```sql
 SELECT
   "TestTable2"."Test2Id",
@@ -458,6 +485,7 @@ class TestSelect
     }
 }
 ```
+
 [TestSelect](tests/Models/TestSelect.php)
 
 ```php
@@ -476,7 +504,9 @@ foreach ($Select as $Item) {
     var_dump($Item);
 }
 ```
+
 Output:
+
 ```
 object(LiliDb\Tests\Models\TestSelect)[246]
   public ?int 'TestId' => int 1
@@ -502,6 +532,7 @@ object(LiliDb\Tests\Models\TestSelect)[119]
 ```
 
 MySql query execution:
+
 ```sql
 SELECT
   `A`.`Id`,
@@ -516,6 +547,7 @@ WHERE
 ```
 
 PostgreSql query execution:
+
 ```sql
 SELECT
   "TestTable"."Id",
@@ -587,7 +619,9 @@ $Select = TestTable
     ))
     ->ExecutePage(0, 1);
 ```
+
 MySql query execution:
+
 ```sql
 SELECT
   `A`.`Id`,
@@ -625,6 +659,7 @@ LIMIT 0, 1
 ```
 
 PostgreSql query execution:
+
 ```sql
 SELECT
   "TestTable"."Id",

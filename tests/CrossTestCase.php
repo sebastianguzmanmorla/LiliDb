@@ -108,8 +108,8 @@ abstract class CrossTestCase extends TestCase
 
         $Result = TestTable::Insert(self::$Item1, self::$Item2)
             ->OnDuplicateKeyUpdate(
-                TestTable::Field('TestName'),
-                TestTable::Field('TestDateTime')
+                fn (TestTable $x) => $x->TestName
+                && $x->TestDateTime
             )
             ->Execute();
 

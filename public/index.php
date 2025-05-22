@@ -61,8 +61,8 @@ foreach ($Connections as $Connection) {
 
     $Insert = TestTable::Insert($Insert1, $Insert2)
         ->OnDuplicateKeyUpdate(
-            TestTable::Field('TestName'),
-            TestTable::Field('TestDateTime')
+            fn (TestTable $x) => $x->TestName
+            && $x->TestDateTime
         )
         ->Execute();
 
@@ -106,9 +106,9 @@ foreach ($Connections as $Connection) {
 
     $Insert = TestTable2::Insert($Insert1, $Insert2)
         ->OnDuplicateKeyUpdate(
-            TestTable2::Field('TestId'),
-            TestTable2::Field('Test2Number'),
-            TestTable2::Field('Test2State'),
+            fn (TestTable2 $x) => $x->TestId
+            && $x->Test2Number
+            && $x->Test2State
         )
         ->Execute();
 
