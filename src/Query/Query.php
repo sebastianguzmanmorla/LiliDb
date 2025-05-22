@@ -3,8 +3,9 @@
 namespace LiliDb\Query;
 
 use Closure;
-use Exception;
+use Generator;
 use LiliDb\Database;
+use LiliDb\Exceptions\QueryException;
 use LiliDb\Interfaces\ITable;
 use LiliDb\Result;
 use LiliDb\ResultRow;
@@ -47,9 +48,9 @@ class Query
         return SqlFormatter::format($this->Query, false);
     }
 
-    public function ExecuteResultSet(): ResultSet
+    public function FetchAllResultSet(): ResultSet
     {
-        $Result = $this->ExecuteResult(true);
+        $Result = $this->FetchAll(true);
 
         if ($Result->Result !== false) {
             foreach ($Result->Result as &$Row) {
@@ -75,26 +76,45 @@ class Query
         );
     }
 
-    public function ExecuteResult(bool $Associative = true): Result
+    public function FetchAll(bool $Associative = true): Result
     {
         try {
             $this->Database->Query = $this;
 
             if ($Statement = $this->Database->Connection->Prepare($this)) {
-                if ($Statement->execute()) {
-                    $Data = $Statement->Result($Associative);
+                if ($Statement->Execute()) {
+                    $Data = $Statement->FetchAll($Associative);
 
                     $Statement->Close();
 
                     return new Result($this, $Data);
                 }
 
-                throw new Exception($Statement->Error());
+                throw new QueryException($Statement->Error());
+            } else {
+                throw new QueryException($this->Database->Connection->Error());
             }
-
-            throw new Exception($this->Database->Connection->Error());
         } catch (Throwable $ex) {
             return new Result($this, false, $ex);
+        }
+    }
+
+    public function Fetch(bool $Associative = true): Generator
+    {
+        $this->Database->Query = $this;
+
+        if ($Statement = $this->Database->Connection->Prepare($this)) {
+            if ($Statement->Execute()) {
+                foreach ($Statement->Fetch($Associative) as $Row) {
+                    yield $Row;
+                }
+
+                $Statement->Close();
+            } else {
+                throw new QueryException($Statement->Error());
+            }
+        } else {
+            throw new QueryException($this->Database->Connection->Error());
         }
     }
 
@@ -110,9 +130,9 @@ class Query
                     return new Result($this, true);
                 }
 
-                throw new Exception($Statement->Error());
+                throw new QueryException($Statement->Error());
             } else {
-                throw new Exception($this->Database->Connection->Error());
+                throw new QueryException($this->Database->Connection->Error());
             }
         } catch (Throwable $ex) {
             return new Result($this, false, $ex);

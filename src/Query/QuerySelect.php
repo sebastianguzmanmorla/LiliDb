@@ -3,7 +3,8 @@
 namespace LiliDb\Query;
 
 use Closure;
-use Exception;
+use Generator;
+use LiliDb\Exceptions\QueryException;
 use LiliDb\Interfaces\IField;
 use LiliDb\Interfaces\ITable;
 use LiliDb\Query\Traits\GroupBy;
@@ -62,7 +63,7 @@ abstract class QuerySelect extends Query
         $Reflection = new ReflectionFunction($Select);
 
         if ($Reflection->getReturnType() === null) {
-            throw new Exception('Select closure must define a return class', false);
+            throw new QueryException('Select closure must define a return class', false);
         }
 
         foreach ($Reflection->getParameters() as $Parameter) {
@@ -74,7 +75,7 @@ abstract class QuerySelect extends Query
                 $Table = $ParameterClass->getStaticPropertyValue('Table', null);
 
                 if ($Table === null) {
-                    throw new Exception($ParameterClass->getName() . " doesn't use Model", false);
+                    throw new QueryException($ParameterClass->getName() . " doesn't use Model", false);
                 }
             }
         }
@@ -125,6 +126,28 @@ abstract class QuerySelect extends Query
         return $this->Execute($Offset, $Limit, $this->Count());
     }
 
+    public function ExecuteFetch(?int $Offset = null, ?int $Limit = null): Generator
+    {
+        $this->Offset = $Offset;
+        $this->Limit = $Limit;
+
+        $Associative = empty($this->Select);
+
+        if ($Associative && empty($this->Join)) {
+            $this->SelectClosure = fn ($x) => $x;
+        }
+
+        $SelectGroup = $this->BuildSelectGroup($Associative);
+
+        $ResultRow = $this->SelectClosure !== null
+            ? fn (array &$SelectGroup, array $Row) => $this->ResultRowClosure($SelectGroup, $Row)
+            : fn (array &$SelectGroup, array $Row) => $this->ResultRow($SelectGroup, $Row);
+
+        foreach ($this->Fetch($Associative) as $Row) {
+            yield $ResultRow->__invoke($SelectGroup, $Row);
+        }
+    }
+
     public function Execute(?int $Offset = null, ?int $Limit = null, ?int $Total = null): ResultSet
     {
         $this->Offset = $Offset;
@@ -136,8 +159,83 @@ abstract class QuerySelect extends Query
             $this->SelectClosure = fn ($x) => $x;
         }
 
-        $Result = $this->ExecuteResult($Associative);
+        $SelectGroup = $this->BuildSelectGroup($Associative);
 
+        $Result = $this->FetchAll($Associative);
+
+        $ResultRow = $this->SelectClosure !== null
+            ? fn (array &$SelectGroup, array $Row) => $this->ResultRowClosure($SelectGroup, $Row)
+            : fn (array &$SelectGroup, array $Row) => $this->ResultRow($SelectGroup, $Row);
+
+        if ($Result->Result !== false) {
+            foreach ($Result->Result as &$Row) {
+                $Row = $ResultRow->__invoke($SelectGroup, $Row);
+            }
+
+            return new ResultSet(
+                Query: $this,
+                Result: $Result->Result,
+                Offset: $this->Offset,
+                Limit: $this->Limit,
+                Total: $Total
+            );
+        }
+
+        return new ResultSet(
+            Query: $this,
+            Result: [],
+            Error: $Result->Error
+        );
+    }
+
+    private function ResultRowClosure(array &$SelectGroup, array &$Row): object
+    {
+        $Args = [];
+
+        foreach ($SelectGroup as $TableName => $TableArray) {
+            if ($TableName != '') {
+                $Class = $TableArray['Table']->Reflection->newInstance();
+
+                foreach ($TableArray['Fields'] as $Index => $Field) {
+                    $Field->FieldSetValue($Class, $Row[$Index]);
+                }
+
+                $Args[] = $Class;
+            }
+        }
+
+        return $this->SelectClosure->__invoke(...$Args);
+    }
+
+    private function ResultRow(array &$SelectGroup, array &$Row): ResultRow
+    {
+        $ResultRow = new ResultRow();
+
+        foreach ($SelectGroup as $TableName => $TableArray) {
+            if ($TableName == '') {
+                foreach ($TableArray as $Index => $Field) {
+                    $Value = $Row[$Index] ?? null;
+
+                    $ResultRow->__set($Field, $Value);
+                }
+            } else {
+                $Class = $TableArray['Table']->Reflection->newInstance();
+
+                foreach ($TableArray['Fields'] as $Index => $Field) {
+                    $Value = $Row[$Index] ?? null;
+
+                    $Field->FieldSetValue($Class, $Value);
+                }
+
+                $ResultRow->__set($TableName, $Class);
+            }
+        }
+
+        return $ResultRow;
+    }
+
+    private function BuildSelectGroup(bool $Associative): array
+    {
         $SelectGroup = [];
 
         if ($Associative) {
@@ -174,67 +272,6 @@ abstract class QuerySelect extends Query
             }
         }
 
-        if ($Result->Result !== false) {
-            if ($this->SelectClosure !== null) {
-                foreach ($Result->Result as &$Row) {
-                    $Args = [];
-
-                    foreach ($SelectGroup as $TableName => $TableArray) {
-                        if ($TableName == '') {
-                        } else {
-                            $Class = $TableArray['Table']->Reflection->newInstance();
-
-                            foreach ($TableArray['Fields'] as $Index => $Field) {
-                                $Field->FieldSetValue($Class, $Row[$Index]);
-                            }
-
-                            $Args[] = $Class;
-                        }
-                    }
-
-                    $Row = $this->SelectClosure->__invoke(...$Args);
-                }
-            } else {
-                foreach ($Result->Result as &$Row) {
-                    $ResultRow = new ResultRow();
-
-                    foreach ($SelectGroup as $TableName => $TableArray) {
-                        if ($TableName == '') {
-                            foreach ($TableArray as $Index => $Field) {
-                                $Value = $Row[$Index] ?? null;
-
-                                $ResultRow->__set($Field, $Value);
-                            }
-                        } else {
-                            $Class = $TableArray['Table']->Reflection->newInstance();
-
-                            foreach ($TableArray['Fields'] as $Index => $Field) {
-                                $Value = $Row[$Index] ?? null;
-
-                                $Field->FieldSetValue($Class, $Value);
-                            }
-
-                            $ResultRow->__set($TableName, $Class);
-                        }
-                    }
-
-                    $Row = $ResultRow;
-                }
-            }
-
-            return new ResultSet(
-                Query: $this,
-                Result: $Result->Result,
-                Offset: $this->Offset,
-                Limit: $this->Limit,
-                Total: $Total
-            );
-        }
-
-        return new ResultSet(
-            Query: $this,
-            Result: [],
-            Error: $Result->Error
-        );
+        return $SelectGroup;
     }
 }

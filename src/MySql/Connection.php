@@ -2,7 +2,7 @@
 
 namespace LiliDb\MySql;
 
-use Exception;
+use LiliDb\Exceptions\DatabaseException;
 use LiliDb\Interfaces\IConnection;
 use LiliDb\Interfaces\IField;
 use LiliDb\Interfaces\IStatement;
@@ -33,6 +33,8 @@ class Connection implements IConnection
         #[SensitiveParameter]
         public ?string $Password
     ) {
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
         $this->Client = mysqli_init();
         $this->Client->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
     }
@@ -51,7 +53,7 @@ class Connection implements IConnection
             } catch (Throwable $ex) {
                 $this->_Connected = false;
 
-                throw new Exception('Database connection failed: ' . $ex->getMessage());
+                throw new DatabaseException('Database connection failed', previous: $ex);
             }
         }
     }

@@ -2,7 +2,7 @@
 
 namespace LiliDb\PostgreSql\Query;
 
-use Exception;
+use LiliDb\Exceptions\QueryException;
 use LiliDb\Interfaces\IField;
 use LiliDb\Query\QuerySelect as AbstractQuerySelect;
 use LiliDb\SqlFormatter;
@@ -29,9 +29,9 @@ class QuerySelect extends AbstractQuerySelect
 
         $Result = $this->Database
             ->RawQuery("SELECT SUM(C) AS \"Count\" FROM ({$Sql}) as \"CountTable\"", $Query->Parameters)
-            ->ExecuteResultSet();
+            ->FetchAllResultSet();
 
-        return $Result->Count ?? throw new Exception('Failed to Count... ' . $Result->Error?->getMessage(), previous: $Result->Error);
+        return $Result->Count ?? throw new QueryException('Failed to Count', previous: $Result->Error);
     }
 
     public function GenerateSql(): string

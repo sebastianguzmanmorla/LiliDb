@@ -31,7 +31,7 @@ $Connections = [
 ];
 
 foreach ($Connections as $Connection) {
-    $Database = new TestDatabase($Connection, getenv('DB_DATABASE'));
+    $Database = new TestDatabase($Connection, $Connection->Database);
 
     foreach ($Database->DatabaseTables as $Table) {
         $CreateTable = $Table->CreateTable()
@@ -215,6 +215,19 @@ foreach ($Connections as $Connection) {
         var_dump($Item->Test2State);
         var_dump($Item->Now);
 
+        var_dump($Item);
+    }
+
+    echo '<hr>';
+
+    $Select = TestTable::InnerJoin(fn (TestTable2 $y, TestTable $x) => $y->TestId == $x->TestId && $y->Test2State == true)
+        ->OrderBy(fn (TestTable $x) => $x->TestName)
+        ->SelectField(TestTable::Field('TestId'), TestTable2::Field('Test2State'))
+        ->SelectRaw('NOW() as Now');
+
+    var_dump($Select);
+
+    foreach ($Select->ExecuteFetch() as $Item) {
         var_dump($Item);
     }
 

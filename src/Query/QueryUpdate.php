@@ -2,7 +2,7 @@
 
 namespace LiliDb\Query;
 
-use Exception;
+use LiliDb\Exceptions\QueryException;
 use LiliDb\Interfaces\ITable;
 use LiliDb\Query\Traits\Where;
 use LiliDb\Result;
@@ -23,7 +23,7 @@ abstract class QueryUpdate extends Query
         );
 
         if ($Value::class != $this->Table->Model) {
-            throw new Exception($Value::class . " isn't class " . $this->Table->Model);
+            throw new QueryException($Value::class . " isn't class " . $this->Table->Model);
         }
 
         $this->Value = $Value;

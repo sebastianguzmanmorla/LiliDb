@@ -21,7 +21,7 @@ final class PostgreSqlTest extends CrossTestCase
             Password: getenv('POSTGRES_PASSWORD')
         );
 
-        self::$Database = new TestDatabase($DatabaseConnection, getenv('PG_DATABASE'));
+        self::$Database = new TestDatabase($DatabaseConnection, getenv('POSTGRES_DB'));
 
         self::InitData();
     }

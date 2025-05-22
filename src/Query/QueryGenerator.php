@@ -412,8 +412,13 @@ trait QueryGenerator
                 $Value->Value = $Value->Value[$Key] ?? null;
             } else {
                 $ValueReflection = new ReflectionClass($Value->Value);
-                $ValueProperty = $ValueReflection->getProperty($Key);
-                $Value->Value = $ValueProperty->getValue($Value->Value) ?? null;
+
+                if ($ValueReflection->hasMethod('__get')) {
+                    $Value->Value = $Value->Value->__get($Key) ?? null;
+                } else {
+                    $ValueProperty = $ValueReflection->getProperty($Key);
+                    $Value->Value = $ValueProperty->getValue($Value->Value) ?? null;
+                }
             }
 
             $Value->Expression .= $Tokens[$UnsetIndex]->text;

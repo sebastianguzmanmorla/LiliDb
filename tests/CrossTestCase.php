@@ -38,7 +38,7 @@ abstract class CrossTestCase extends TestCase
             default => throw new Exception(self::$Database->Connection::class . ' not implemented')
         };
 
-        $Result = $Query->ExecuteResultSet();
+        $Result = $Query->FetchAllResultSet();
 
         self::assertNull($Result->Error);
 

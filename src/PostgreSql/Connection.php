@@ -3,7 +3,7 @@
 namespace LiliDb\PostgreSql;
 
 use ErrorException;
-use Exception;
+use LiliDb\Exceptions\DatabaseException;
 use LiliDb\Interfaces\IConnection;
 use LiliDb\Interfaces\IField;
 use LiliDb\Interfaces\IStatement;
@@ -57,7 +57,7 @@ class Connection implements IConnection
 
                 pg_set_client_encoding($this->Client, 'utf8');
             } catch (Throwable $ex) {
-                throw new Exception('Database connection failed: ' . $ex->getMessage());
+                throw new DatabaseException('Database connection failed', previous: $ex);
             }
 
             restore_error_handler();

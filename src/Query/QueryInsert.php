@@ -3,6 +3,7 @@
 namespace LiliDb\Query;
 
 use Exception;
+use LiliDb\Exceptions\QueryException;
 use LiliDb\Interfaces\IField;
 use LiliDb\Interfaces\ITable;
 use LiliDb\Result;
@@ -24,7 +25,7 @@ abstract class QueryInsert extends Query
 
         foreach ($Items as $Item) {
             if ($Item::class != $this->Table->Model) {
-                throw new Exception($Item::class . " isn't class " . $this->Table->Model);
+                throw new QueryException($Item::class . " isn't class " . $this->Table->Model);
             }
         }
 
@@ -35,7 +36,7 @@ abstract class QueryInsert extends Query
     {
         foreach ($OnDuplicateKeyUpdate as $Field) {
             if ($Field->Table->Model != $this->Table->Model) {
-                throw new Exception($Field->FieldReflection->name . " isn't from class " . $this->Table->Model);
+                throw new QueryException($Field->FieldReflection->name . " isn't from class " . $this->Table->Model);
             }
         }
 
@@ -66,10 +67,10 @@ abstract class QueryInsert extends Query
                     return new Result($this, true);
                 }
 
-                throw new Exception($Statement->Error());
+                throw new QueryException($Statement->Error());
             }
 
-            throw new Exception($this->Table->Database->Connection->Error());
+            throw new QueryException($this->Table->Database->Connection->Error());
         } catch (Exception $ex) {
             return new Result($this, false, $ex);
         }
