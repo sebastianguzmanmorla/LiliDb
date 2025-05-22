@@ -1,5 +1,5 @@
 <p align="center">
-  <img title="Lilith" src="https://github.com/sebastianguzmanmorla/LiliDb/blob/develop/lili.svg?raw=true" />
+  <img title="Lilith" src="https://github.com/sebastianguzmanmorla/LiliDb/blob/main/lili.svg?raw=true" />
 </p>
 
 # LiliDb
