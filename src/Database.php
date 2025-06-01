@@ -2,7 +2,7 @@
 
 namespace LiliDb;
 
-use Exception;
+use LiliDb\Exceptions\DatabaseException;
 use LiliDb\Interfaces\IConnection;
 use LiliDb\Interfaces\ITable;
 use LiliDb\MySql\Attributes\Table as MySqlTable;
@@ -14,7 +14,7 @@ use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionProperty;
 
-class Database
+abstract class Database
 {
     public ?string $DatabaseName = null;
 
@@ -35,7 +35,7 @@ class Database
         $TableClass = match ($Connection::class) {
             MySqlConnection::class => MySqlTable::class,
             PostgreSqlConnection::class => PostgreSqlTable::class,
-            default => throw new Exception($Connection::class . ' not implemented')
+            default => throw new DatabaseException($Connection::class . ' not implemented')
         };
 
         foreach ($ReflectionClass->getProperties(ReflectionProperty::IS_PUBLIC) as $DatabaseProperty) {
@@ -74,7 +74,7 @@ class Database
     public function DatabaseTable(string $Name): ?ITable
     {
         if (!isset($this->DatabaseTables[$Name])) {
-            return null;
+            throw new DatabaseException(static::class . " doesn't have a '" . $Name . "' table");
         }
 
         return $this->DatabaseTables[$Name];

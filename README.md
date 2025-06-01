@@ -1,5 +1,5 @@
 <p align="center">
-  <img title="Lilith" src="https://github.com/sebastianguzmanmorla/LiliDb/blob/main/lili.svg?raw=true" />
+  <img alt="Lilith" title="Lilith" src="https://github.com/sebastianguzmanmorla/LiliDb/blob/main/lili.svg?raw=true" />
 </p>
 
 # LiliDb
@@ -93,6 +93,7 @@ class TestDatabase extends Database
 To define a connection is necessary to instance a **LiliDb\\*\\Connection** class
 
 MySql connection:
+
 ```php
 <?php
 
@@ -111,6 +112,7 @@ $Database = new TestDatabase($Connection, getenv('MYSQL_DATABASE'));
 ```
 
 PostgreSql connection:
+
 ```php
 <?php
 
@@ -138,7 +140,9 @@ foreach ($Database->DatabaseTables as $Table) {
   echo $CreateTable->Query;
 }
 ```
+
 Or
+
 ```php
 $CreateTable = TestTable::CreateTable()
   ->ExecuteQuery();
@@ -150,21 +154,22 @@ MySql query execution:
 
 ```sql
 CREATE TABLE IF NOT EXISTS `A` (
-  `Id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, 
-  `Name` VARCHAR(50) NOT NULL DEFAULT 'Test', 
-  `TestDateTime` DATETIME NOT NULL DEFAULT NOW(), 
-  `State` TINYINT(1) NOT NULL DEFAULT TRUE, 
+  `Id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Name` VARCHAR(50) NOT NULL DEFAULT 'Test',
+  `TestDateTime` DATETIME NOT NULL DEFAULT NOW(),
+  `State` TINYINT(1) NOT NULL DEFAULT TRUE,
   PRIMARY KEY (`Id`)
 )
 ```
 
 PostgreSql query execution:
+
 ```sql
 CREATE TABLE IF NOT EXISTS "public"."TestTable" (
-  "Id" bigserial NOT NULL, 
-  "TestName" varchar(50) NOT NULL DEFAULT 'Test', 
-  "TestDateTime" timestamp NOT NULL DEFAULT NOW(), 
-  "State" boolean NOT NULL DEFAULT TRUE, 
+  "Id" bigserial NOT NULL,
+  "TestName" varchar(50) NOT NULL DEFAULT 'Test',
+  "TestDateTime" timestamp NOT NULL DEFAULT NOW(),
+  "State" boolean NOT NULL DEFAULT TRUE,
   PRIMARY KEY ("Id")
 )
 ```
@@ -179,7 +184,9 @@ foreach ($Database->DatabaseTables as $Table) {
   echo $TruncateTable->Query;
 }
 ```
+
 Or
+
 ```php
 $TruncateTable = TestTable::TruncateTable()
   ->ExecuteQuery();
@@ -188,11 +195,13 @@ echo $TruncateTable->Query;
 ```
 
 MySql query execution:
+
 ```sql
 TRUNCATE TABLE `A`
 ```
 
 PostgreSql query execution:
+
 ```sql
 TRUNCATE TABLE "public"."TestTable"
 ```
@@ -207,7 +216,9 @@ foreach ($Database->DatabaseTables as $Table) {
   echo $DropTable->Query;
 }
 ```
+
 Or
+
 ```php
 $DropTable = TestTable::DropTable()
   ->ExecuteQuery();
@@ -216,11 +227,13 @@ echo $DropTable->Query;
 ```
 
 MySql query execution:
+
 ```sql
 DROP TABLE `A`
 ```
 
 PostgreSql query execution:
+
 ```sql
 DROP TABLE "public"."TestTable"
 ```
@@ -240,9 +253,9 @@ $Insert2->TestName = 'b';
 $Insert2->TestDateTime = new DateTime();
 
 $Insert = TestTable::Insert($Insert1, $Insert2)
-    ->OnDuplicateKeyUpdate(
-        TestTable::Field('TestName'),
-        TestTable::Field('TestDateTime')
+    ->OnDuplicateKeyUpdate(fn(TestTable $x) =>
+        $x->TestName &&
+        $x->TestDateTime
     )
     ->Execute();
 
@@ -250,24 +263,26 @@ echo $Insert->Query;
 ```
 
 MySql query execution:
+
 ```sql
-INSERT INTO `A` (`Id`, `Name`, `TestDateTime`) 
-VALUES 
-  (1, 'a', '2025-05-22 03:18:51'), 
-  (2, 'b', '2025-05-22 03:18:51')
-ON DUPLICATE KEY UPDATE 
-  `Name` = VALUES(`Name`), 
-  `TestDateTime` = VALUES (`TestDateTime`)
+INSERT INTO `A` (`Id`, `Name`, `TestDateTime`)
+VALUES
+  (1, 'a', '2025-05-22 03:18:51'),
+  (2, 'b', '2025-05-22 03:18:51') as new
+ON DUPLICATE KEY UPDATE
+  `Name` = new.`Name`,
+  `TestDateTime` = new.`TestDateTime`
 ```
 
 PostgreSql query execution:
+
 ```sql
-INSERT INTO "public"."TestTable" ("Id", "TestName", "TestDateTime") 
-VALUES 
-  (1, 'a', '2025-05-22 03:18:51'), 
+INSERT INTO "public"."TestTable" ("Id", "TestName", "TestDateTime")
+VALUES
+  (1, 'a', '2025-05-22 03:18:51'),
   (2, 'b', '2025-05-22 03:18:51')
-ON CONFLICT ("Id") DO UPDATE SET 
-  "TestName" = EXCLUDED."TestName", 
+ON CONFLICT ("Id") DO UPDATE SET
+  "TestName" = EXCLUDED."TestName",
   "TestDateTime" = EXCLUDED."TestDateTime"
 ```
 
@@ -286,24 +301,26 @@ echo $Update->Query;
 ```
 
 MySql query execution:
+
 ```sql
-UPDATE 
-  `A` 
-SET 
-  `A`.`Name` = 'a', 
-  `A`.`TestDateTime` = '2025-05-22 03:18:51' 
-WHERE 
+UPDATE
+  `A`
+SET
+  `A`.`Name` = 'a',
+  `A`.`TestDateTime` = '2025-05-22 03:18:51'
+WHERE
   (`A`.`Id` = 1)
 ```
 
 PostgreSql query execution:
+
 ```sql
-UPDATE 
-  "public"."TestTable" 
-SET 
-  "TestName" = 'a', 
-  "TestDateTime" = '2025-05-22 03:18:51' 
-WHERE 
+UPDATE
+  "public"."TestTable"
+SET
+  "TestName" = 'a',
+  "TestDateTime" = '2025-05-22 03:18:51'
+WHERE
   ("TestTable"."Id" = 1)
 ```
 
@@ -318,16 +335,18 @@ echo $Delete->Query;
 ```
 
 MySql query execution:
+
 ```sql
-DELETE FROM `A` 
-WHERE 
+DELETE FROM `A`
+WHERE
   (`A`.`Id` = 2)
 ```
 
 PostgreSql query execution:
+
 ```sql
-DELETE FROM "public"."TestTable" 
-WHERE 
+DELETE FROM "public"."TestTable"
+WHERE
   ("TestTable"."Id" = 2)
 ```
 
@@ -346,16 +365,18 @@ foreach ($Select as $Item) {
   var_dump($Item);
 }
 ```
+
 Output:
+
 ```
 object(LiliDb\ResultRow)[267]
-  public 'TestTable' => 
+  public 'TestTable' =>
     object(LiliDb\Tests\Models\TestTable)[213]
       public ?int 'TestId' => int 1
       public ?string 'TestName' => *uninitialized*
       public ?DateTime 'TestDateTime' => *uninitialized*
       public ?bool 'State' => *uninitialized*
-  public 'TestTable2' => 
+  public 'TestTable2' =>
     object(LiliDb\Tests\Models\TestTable2)[221]
       public ?int 'Test2Id' => *uninitialized*
       public ?int 'TestId' => *uninitialized*
@@ -365,26 +386,28 @@ object(LiliDb\ResultRow)[267]
 ```
 
 MySql query execution:
+
 ```sql
-SELECT 
-  `A`.`Id`, 
-  `B`.`D`, 
-  NOW() as Now 
-FROM `A` 
-INNER JOIN `B` ON `B`.`B` = `A`.`Id` AND `B`.`D` = TRUE 
-ORDER BY 
+SELECT
+  `A`.`Id`,
+  `B`.`D`,
+  NOW() as Now
+FROM `A`
+INNER JOIN `B` ON `B`.`B` = `A`.`Id` AND `B`.`D` = TRUE
+ORDER BY
   `A`.`Name`
 ```
 
 PostgreSql query execution:
+
 ```sql
-SELECT 
-  "TestTable"."Id", 
-  "TestTable2"."Test2State", 
-  NOW() as Now 
-FROM "public"."TestTable" 
-INNER JOIN "public"."TestTable2" ON "TestTable2"."TestId" = "TestTable"."Id" AND "TestTable2"."Test2State" = TRUE 
-ORDER BY 
+SELECT
+  "TestTable"."Id",
+  "TestTable2"."Test2State",
+  NOW() as Now
+FROM "public"."TestTable"
+INNER JOIN "public"."TestTable2" ON "TestTable2"."TestId" = "TestTable"."Id" AND "TestTable2"."Test2State" = TRUE
+ORDER BY
   "TestTable"."TestName"
 ```
 
@@ -400,7 +423,9 @@ foreach ($Select as $Item) {
     var_dump($Item);
 }
 ```
+
 Output:
+
 ```
 object(LiliDb\Tests\Models\TestTable2)[317]
   public ?int 'Test2Id' => int 1
@@ -416,28 +441,30 @@ object(LiliDb\Tests\Models\TestTable2)[236]
 ```
 
 MySql query execution:
+
 ```sql
-SELECT 
-  `B`.`Id`, 
-  `B`.`B`, 
-  `B`.`C`, 
-  `B`.`D` 
-FROM `A` 
-INNER JOIN `B` ON `B`.`B` = `A`.`Id` 
-WHERE 
+SELECT
+  `B`.`Id`,
+  `B`.`B`,
+  `B`.`C`,
+  `B`.`D`
+FROM `A`
+INNER JOIN `B` ON `B`.`B` = `A`.`Id`
+WHERE
   (`A`.`Id` > 0)
 ```
 
 PostgreSql query execution:
+
 ```sql
-SELECT 
-  "TestTable2"."Test2Id", 
-  "TestTable2"."TestId", 
-  "TestTable2"."Test2Number", 
-  "TestTable2"."Test2State" 
-FROM "public"."TestTable" 
-INNER JOIN "public"."TestTable2" ON "TestTable2"."TestId" = "TestTable"."Id" 
-WHERE 
+SELECT
+  "TestTable2"."Test2Id",
+  "TestTable2"."TestId",
+  "TestTable2"."Test2Number",
+  "TestTable2"."Test2State"
+FROM "public"."TestTable"
+INNER JOIN "public"."TestTable2" ON "TestTable2"."TestId" = "TestTable"."Id"
+WHERE
   ("TestTable"."Id" > 0)
 ```
 
@@ -458,6 +485,7 @@ class TestSelect
     }
 }
 ```
+
 [TestSelect](tests/Models/TestSelect.php)
 
 ```php
@@ -476,12 +504,14 @@ foreach ($Select as $Item) {
     var_dump($Item);
 }
 ```
+
 Output:
+
 ```
 object(LiliDb\Tests\Models\TestSelect)[246]
   public ?int 'TestId' => int 1
   public ?string 'TestName' => string 'a' (length=21)
-  public ?DateTime 'TestDateTime' => 
+  public ?DateTime 'TestDateTime' =>
     object(DateTime)[286]
       public 'date' => string '2025-05-22 03:58:42.000000' (length=26)
       public 'timezone_type' => int 3
@@ -492,7 +522,7 @@ object(LiliDb\Tests\Models\TestSelect)[246]
 object(LiliDb\Tests\Models\TestSelect)[119]
   public ?int 'TestId' => int 1
   public ?string 'TestName' => string 'a' (length=21)
-  public ?DateTime 'TestDateTime' => 
+  public ?DateTime 'TestDateTime' =>
     object(DateTime)[247]
       public 'date' => string '2025-05-22 03:58:42.000000' (length=26)
       public 'timezone_type' => int 3
@@ -502,30 +532,32 @@ object(LiliDb\Tests\Models\TestSelect)[119]
 ```
 
 MySql query execution:
+
 ```sql
-SELECT 
-  `A`.`Id`, 
-  `A`.`Name`, 
-  `A`.`TestDateTime`, 
-  `B`.`Id`, 
-  `B`.`C` 
-FROM `A` 
-INNER JOIN `B` ON `B`.`B` = `A`.`Id` 
-WHERE 
+SELECT
+  `A`.`Id`,
+  `A`.`Name`,
+  `A`.`TestDateTime`,
+  `B`.`Id`,
+  `B`.`C`
+FROM `A`
+INNER JOIN `B` ON `B`.`B` = `A`.`Id`
+WHERE
   (`A`.`Id` > 0)
 ```
 
 PostgreSql query execution:
+
 ```sql
-SELECT 
-  "TestTable"."Id", 
-  "TestTable"."TestName", 
-  "TestTable"."TestDateTime", 
-  "TestTable2"."Test2Id", 
-  "TestTable2"."Test2Number" 
-FROM "public"."TestTable" 
-INNER JOIN "public"."TestTable2" ON "TestTable2"."TestId" = "TestTable"."Id" 
-WHERE 
+SELECT
+  "TestTable"."Id",
+  "TestTable"."TestName",
+  "TestTable"."TestDateTime",
+  "TestTable2"."Test2Id",
+  "TestTable2"."Test2Number"
+FROM "public"."TestTable"
+INNER JOIN "public"."TestTable2" ON "TestTable2"."TestId" = "TestTable"."Id"
+WHERE
   ("TestTable"."Id" > 0)
 ```
 
@@ -587,76 +619,79 @@ $Select = TestTable
     ))
     ->ExecutePage(0, 1);
 ```
+
 MySql query execution:
+
 ```sql
-SELECT 
-  `A`.`Id`, 
-  `A`.`Name`, 
-  `A`.`TestDateTime`, 
-  `B`.`Id`, 
-  `B`.`C` 
-FROM 
-  `A` 
-LEFT JOIN `B` ON `B`.`B` = `A`.`Id` OR `A`.`Id` BETWEEN `B`.`C` AND `B`.`C` 
-WHERE 
+SELECT
+  `A`.`Id`,
+  `A`.`Name`,
+  `A`.`TestDateTime`,
+  `B`.`Id`,
+  `B`.`C`
+FROM
+  `A`
+LEFT JOIN `B` ON `B`.`B` = `A`.`Id` OR `A`.`Id` BETWEEN `B`.`C` AND `B`.`C`
+WHERE
   (
-    `A`.`TestDateTime` BETWEEN '2025-05-22 03:52:25' AND '2025-05-22 04:22:25' 
-    OR `A`.`Name` LIKE '%a%' 
-    OR `A`.`Name` NOT LIKE 'a%' 
-    OR `B`.`C` IS NULL 
-    OR `B`.`C` IS NOT NULL 
-    OR `B`.`C` BETWEEN 9 AND 12 
-    OR `B`.`D` = TRUE 
-    OR `B`.`D` = TRUE 
-    OR `B`.`C` = 11 
+    `A`.`TestDateTime` BETWEEN '2025-05-22 03:52:25' AND '2025-05-22 04:22:25'
+    OR `A`.`Name` LIKE '%a%'
+    OR `A`.`Name` NOT LIKE 'a%'
+    OR `B`.`C` IS NULL
+    OR `B`.`C` IS NOT NULL
+    OR `B`.`C` BETWEEN 9 AND 12
+    OR `B`.`D` = TRUE
+    OR `B`.`D` = TRUE
+    OR `B`.`C` = 11
     OR (
-      `B`.`D` = `B`.`D` 
-      OR `B`.`D` = FALSE 
-      OR `B`.`D` = FALSE 
-      OR `B`.`D` <> FALSE 
-      OR `B`.`D` = TRUE 
+      `B`.`D` = `B`.`D`
+      OR `B`.`D` = FALSE
+      OR `B`.`D` = FALSE
+      OR `B`.`D` <> FALSE
+      OR `B`.`D` = TRUE
       OR `B`.`D` = FALSE
     )
-  ) 
-ORDER BY 
-  `A`.`Name`, 
-  `A`.`TestDateTime` DESC 
+  )
+ORDER BY
+  `A`.`Name`,
+  `A`.`TestDateTime` DESC
 LIMIT 0, 1
 ```
 
 PostgreSql query execution:
+
 ```sql
-SELECT 
-  "TestTable"."Id", 
-  "TestTable"."TestName", 
-  "TestTable"."TestDateTime", 
-  "TestTable2"."Test2Id", 
-  "TestTable2"."Test2Number" 
-FROM "public"."TestTable" 
-LEFT JOIN "public"."TestTable2" ON "TestTable2"."TestId" = "TestTable"."Id" OR "TestTable"."Id" BETWEEN "TestTable2"."Test2Number" AND "TestTable2"."Test2Number" 
-WHERE 
+SELECT
+  "TestTable"."Id",
+  "TestTable"."TestName",
+  "TestTable"."TestDateTime",
+  "TestTable2"."Test2Id",
+  "TestTable2"."Test2Number"
+FROM "public"."TestTable"
+LEFT JOIN "public"."TestTable2" ON "TestTable2"."TestId" = "TestTable"."Id" OR "TestTable"."Id" BETWEEN "TestTable2"."Test2Number" AND "TestTable2"."Test2Number"
+WHERE
   (
     "TestTable"."TestDateTime" BETWEEN '2025-05-22 03:52:25' AND '2025-05-22 04:22:25'
-    OR "TestTable"."TestName" LIKE '%a%' 
-    OR "TestTable"."TestName" NOT LIKE 'a%' 
-    OR "TestTable2"."Test2Number" IS NULL 
-    OR "TestTable2"."Test2Number" IS NOT NULL 
+    OR "TestTable"."TestName" LIKE '%a%'
+    OR "TestTable"."TestName" NOT LIKE 'a%'
+    OR "TestTable2"."Test2Number" IS NULL
+    OR "TestTable2"."Test2Number" IS NOT NULL
     OR "TestTable2"."Test2Number" BETWEEN 9 AND 12
-    OR "TestTable2"."Test2State" = TRUE 
-    OR "TestTable2"."Test2State" = TRUE 
-    OR "TestTable2"."Test2Number" = 11 
+    OR "TestTable2"."Test2State" = TRUE
+    OR "TestTable2"."Test2State" = TRUE
+    OR "TestTable2"."Test2Number" = 11
     OR (
-      "TestTable2"."Test2State" = "TestTable2"."Test2State" 
-      OR "TestTable2"."Test2State" = FALSE 
-      OR "TestTable2"."Test2State" = FALSE 
-      OR "TestTable2"."Test2State" <> FALSE 
-      OR "TestTable2"."Test2State" = TRUE 
+      "TestTable2"."Test2State" = "TestTable2"."Test2State"
+      OR "TestTable2"."Test2State" = FALSE
+      OR "TestTable2"."Test2State" = FALSE
+      OR "TestTable2"."Test2State" <> FALSE
+      OR "TestTable2"."Test2State" = TRUE
       OR "TestTable2"."Test2State" = FALSE
     )
-  ) 
-ORDER BY 
-  "TestTable"."TestName", 
-  "TestTable"."TestDateTime" DESC 
-LIMIT 
+  )
+ORDER BY
+  "TestTable"."TestName",
+  "TestTable"."TestDateTime" DESC
+LIMIT
   1 OFFSET 0
 ```

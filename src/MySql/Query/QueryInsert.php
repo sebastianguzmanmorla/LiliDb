@@ -60,12 +60,12 @@ class QueryInsert extends AbstractQueryInsert
         $this->Query .= ') VALUES (' . $Values . ')';
 
         if (!empty($this->OnDuplicateKeyUpdate)) {
-            $this->Query .= ' ON DUPLICATE KEY UPDATE ';
+            $this->Query .= 'as new ON DUPLICATE KEY UPDATE ';
 
             $Update = [];
 
             foreach ($this->OnDuplicateKeyUpdate as $Field) {
-                $Update[] = $Field->FieldReference(false) . ' = VALUES(' . $Field->FieldReference(false) . ')';
+                $Update[] = $Field->FieldReference(false) . ' = new.' . $Field->FieldReference(false) . '';
             }
 
             $this->Query .= implode(', ', $Update);

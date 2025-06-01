@@ -2,6 +2,7 @@
 
 namespace LiliDb\Interfaces;
 
+use Generator;
 use LiliDb\Query\Query;
 
 interface IStatement
@@ -10,7 +11,9 @@ interface IStatement
 
     public function Execute(): bool;
 
-    public function Result(bool $Associative = false): array|false;
+    public function FetchAll(bool $Associative = false): array|false;
+
+    public function Fetch(bool $Associative = false): Generator;
 
     public function InsertId(): int|string|false;
 
